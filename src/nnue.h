@@ -1,18 +1,26 @@
 #ifndef NNUE_H
 #define NNUE_H
 
+#include <stdbool.h>
+#include <stdalign.h>
+
 #include "misc.h"
 
+#ifdef __cplusplus
+#   define EXTERNC extern "C"
+#else
+#   define EXTERNC
+#endif
 #if defined (_WIN32)
 #   define _CDECL __cdecl
 #ifdef DLL_EXPORT
-#   define DLLExport extern "C" __declspec(dllexport)
+#   define DLLExport EXTERNC __declspec(dllexport)
 #else
-#   define DLLExport extern "C" __declspec(dllimport)
+#   define DLLExport EXTERNC __declspec(dllimport)
 #endif
 #else
 #   define _CDECL
-#   define DLLExport extern "C"
+#   define DLLExport EXTERNC
 #endif
 
 /*pieces*/
@@ -46,7 +54,7 @@ typedef struct {
 } Accumulator;
 
 /*position*/
-struct Position {
+typedef struct Position {
   int player;
   int* pieces;
   int* squares;
@@ -54,9 +62,9 @@ struct Position {
 #if 0
   DirtyPiece dirtyPiece;
 #endif
-};
+} Position;
 
-int nnue_evaluate(Position* pos);
+int nnue_evaluate_pos(Position* pos);
 
 /**
 * Load NNUE file

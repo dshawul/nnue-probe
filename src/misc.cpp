@@ -87,8 +87,8 @@ static const char file_name[] = "abcdefgh";
 static const char col_name[] = "WwBb";
 static const char cas_name[] = "KQkq";
 
-void decode_fen(const char* fen_str, int& player, int& castle,
-       int& fifty, int& move_number, int* piece, int* square)
+void decode_fen(const char* fen_str, int* player, int* castle,
+       int* fifty, int* move_number, int* piece, int* square)
 {
   /*decode fen*/
   int sq,index = 2;
@@ -123,17 +123,17 @@ void decode_fen(const char* fen_str, int& player, int& castle,
 
   /*player*/
   if((pfen = strchr(col_name,*p)) != 0)
-      player = ((pfen - col_name) >= 2);
+      *player = ((pfen - col_name) >= 2);
   p++;
   p++;
 
   /*castling rights*/
-  castle = 0;
+  *castle = 0;
   if(*p == '-') {
       p++;
   } else {
       while((pfen = strchr(cas_name,*p)) != 0) {
-          castle |= (1 << (pfen - cas_name));
+          *castle |= (1 << (pfen - cas_name));
           p++;
       }
   }
@@ -154,10 +154,10 @@ void decode_fen(const char* fen_str, int& player, int& castle,
   /*fifty & hply*/
   p++;
   if(*p && *(p+1) && isdigit(*p) && ( isdigit(*(p+1)) || *(p+1) == ' ' ) ) {
-      sscanf(p,"%d %d",&fifty,&move_number);
-      if(move_number <= 0) move_number = 5;
+      sscanf(p,"%d %d",fifty,move_number);
+      if(*move_number <= 0) *move_number = 1;
   } else {
-      fifty = 0;
-      move_number = 5;
+      *fifty = 0;
+      *move_number = 1;
   }
 }

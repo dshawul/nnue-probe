@@ -108,7 +108,7 @@ else ifeq ($(DEBUG),1)
         else ifeq ($(COMP),pgcc)
                 CXXFLAGS += -Mpfo -fast noframe
         else
-                CXXFLAGS += -fprofile-use -Ofast -fomit-frame-pointer -flto
+                CXXFLAGS += -fprofile-use -Ofast -fomit-frame-pointer
                 LXXFLAGS += -lgcov
         endif
 else

@@ -1,6 +1,4 @@
 #include <assert.h>
-#include <stdalign.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -1073,7 +1071,7 @@ struct NetData {
 };
 
 // Evaluation function
-int nnue_evaluate(Position *pos)
+int nnue_evaluate_pos(Position *pos)
 {
   int32_t out_value;
   alignas(8) mask_t input_mask[FtOutDims / (8 * sizeof(mask_t))];
@@ -1299,12 +1297,12 @@ DLLExport int _CDECL nnue_evaluate(int player, int* pieces, int* squares)
   pos.player = player;
   pos.pieces = pieces;
   pos.squares = squares;
-  return nnue_evaluate(&pos);
+  return nnue_evaluate_pos(&pos);
 }
 
 DLLExport int _CDECL nnue_evaluate_fen(const char* fen)
 {
   int pieces[33],squares[33],player,castle,fifty,move_number;
-  decode_fen((char*)fen,player,castle,fifty,move_number,pieces,squares);;
+  decode_fen((char*)fen,&player,&castle,&fifty,&move_number,pieces,squares);;
   return nnue_evaluate(player,pieces,squares);
 }
