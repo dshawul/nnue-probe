@@ -28,7 +28,9 @@
 #include <arm_neon.h>
 #endif
 
+#define DLL_EXPORT
 #include "nnue.h"
+#undef DLL_EXPORT
 
 #ifdef NNUE_EMBEDDED
 #include "incbin.h"

@@ -6,13 +6,13 @@ RM = rm -rf
 OBJ = misc.o nnue.o
 HPP = misc.h nnue.h
 
-#########################################################################
+############################
 # SIMD flags
-#########################################################################
+#--------------
+# Disable/Add flags as needed
+############################
 DEFINES = 
-USE_SIMD=
-ifeq ($(COMP),$(filter $(COMP),gcc gcc-cluster clang win))
-  USE_SIMD=true
+ifeq ($(COMP),$(filter $(COMP),gcc clang win icpc))
   DEFINES += -DUSE_AVX2 -mavx2
   DEFINES += -DUSE_SSE41 -msse4.1
   DEFINES += -DUSE_SSSE3 -mssse3
@@ -27,18 +27,7 @@ DEBUG=0
 COMP=gcc
 STRIP=strip
 
-ifeq ($(COMP),gcc-cluster)
-	CXX="mpic++"
-	override COMP=gcc
-	DEFINES += -DCLUSTER
-else ifeq ($(COMP),icpc-cluster)
-	CXX="mpic++"
-	override COMP=icpc
-	DEFINES += -DCLUSTER
-else ifeq ($(COMP),pgcc-cluster)
-	CXX="mpic++"
-	override COMP=pgcc
-else ifeq ($(COMP),pgcc)
+ifeq ($(COMP),pgcc)
 	CXX=pgc++
 else ifeq ($(COMP),gcc)
 	CXX=g++
@@ -60,21 +49,21 @@ STRIP += $(EXE)
 #  Compiler flags
 ###########################
 
-ifeq ($(COMP),arm)
-    LXXFLAGS = -lm
-else
-    LXXFLAGS = -lpthread -lm
-endif
+LXXFLAGS = -lm
 
-UNUSED = -Wno-unused-variable -Wno-unused-result  -Wno-unused-result 
+UNUSED =
+ifeq ($(COMP),icpc)
+else
+    UNUSED += -Wno-unused-variable -Wno-unused-result
+endif
 ifeq ($(COMP),clang)
 else
-    UNUSED += -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-psabi
+    UNUSED += -Wno-unused-but-set-variable -Wno-maybe-uninitialized
 endif
 
 ifeq ($(COMP),win)
+    CXXFLAGS = -Wall -fstrict-aliasing -fno-exceptions -fno-rtti $(UNUSED) -faligned-new -std=c++11
     LXXFLAGS += -static
-    CXXFLAGS = -Wall -fstrict-aliasing -fno-exceptions -fno-rtti $(UNUSED) -std=c++11
 else ifeq ($(COMP),pgcc)
     CXXFLAGS = warn -Mvect=sse -c11
     LXXFLAGS += -ldl
@@ -85,18 +74,14 @@ else ifeq ($(COMP),icpc)
 else
     CXXFLAGS = -Wall -fstrict-aliasing -fno-exceptions -fno-rtti $(UNUSED) -std=c++11
     LXXFLAGS += -ldl
+    ifneq ($(COMP),arm)
+       CXXFLAGS += -faligned-new
+    endif
 endif
 
-ifeq ($(COMP),pgcc)
-else ifeq ($(COMP),arm)
+ifeq ($(COMP),arm)
      CXXFLAGS += -fPIE -pie
      LXXFLAGS += -fPIE -pie
-else
-     CXXFLAGS += -msse
-endif
-
-ifdef USE_SIMD
-   CXXFLAGS += -faligned-new
 endif
 
 ifeq ($(DEBUG),3)
@@ -161,9 +146,11 @@ help:
 	@echo ""
 	@echo "  c ="
 	@echo "	gcc    :  g++ compiler"
+	@echo "	clang  :  clang compiler"
 	@echo "	icpc   :  intel compiler"
+	@echo "	pgcc   :  pgi compiler"
 	@echo "	arm    :  arm android compiler"
-	@echo "	cluster:  mpiC++ compiler"
+	@echo "	win    :  windows cross compiler"
 	@echo ""
 	@echo "2. make clean - removes all files but source code"
 	@echo "3. make strip - strips executable of debugging/profiling data"
