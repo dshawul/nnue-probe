@@ -133,9 +133,6 @@ else
                 CXXFLAGS += -fast noframe
         else
                 CXXFLAGS += -Ofast -fomit-frame-pointer
-                ifneq ($(COMP),clang)
-                    CXXFLAGS += -flto
-                endif
         endif
 endif
 
