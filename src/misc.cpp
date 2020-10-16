@@ -91,15 +91,24 @@ void decode_fen(const char* fen_str, int& player, int& castle,
        int& fifty, int& move_number, int* piece, int* square)
 {
   /*decode fen*/
-  int sq,index = 0;
+  int sq,index = 2;
   const char* p = fen_str,*pfen;
   for(int r = 7;r >= 0; r--) {
       for(int f = 0;f <= 7;f++) {
           sq = r * 8 + f;
           if((pfen = strchr(piece_name,*p)) != 0) {
-              piece[index] = int(strchr(piece_name,*pfen) - piece_name);
-              square[index] = sq;
-              index++;
+              int pc = int(strchr(piece_name,*pfen) - piece_name);
+              if(pc == 1) {
+                 piece[0] = pc;
+                 square[0] = sq;
+              } else if(pc == 7) {
+                 piece[1] = pc;
+                 square[1] = sq;
+              } else {
+                 piece[index] = pc;
+                 square[index] = sq;
+                 index++;
+              }
           } else if((pfen = strchr(rank_name,*p)) != 0) {
               for(int i = 0;i < pfen - rank_name;i++) {
                   f++;
