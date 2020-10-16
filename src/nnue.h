@@ -56,10 +56,43 @@ struct Position {
 #endif
 };
 
-/*interface*/
 int nnue_evaluate(Position* pos);
-DLLExport void _CDECL nnue_init(const char * evalFile);
-DLLExport int _CDECL nnue_evaluate(int player, int* pieces, int* squares);
-DLLExport int _CDECL nnue_evaluate_fen(const char* fen);
+
+/**
+* Load NNUE file
+*/
+DLLExport void _CDECL nnue_init(
+  const char * evalFile             /** Path to NNUE file */
+);
+
+/**
+* Evaluate on FEN string
+*/
+DLLExport int _CDECL nnue_evaluate_fen(
+  const char* fen                   /** FEN string to probe evaluation for */
+);
+
+/**
+* Evaluation subroutine suitable for chess engines.
+* -------------------------------------------------
+* Piece codes are
+*     wking=1, wqueen=2, wrook=3, wbishop= 4, wknight= 5, wpawn= 6,
+*     bking=7, bqueen=8, brook=9, bbishop=10, bknight=11, bpawn=12,
+* Square are
+*     A1=0, B1=1 ... H8=63
+* Input format:
+*     piece[0] is white king, square[0] is its location
+*     piece[1] is black king, square[1] is its location
+*     ..
+*     piece[x], square[x] can be in any order
+*     ..
+*     piece[n+1] is set to 0 to represent end of array
+*/
+DLLExport int _CDECL nnue_evaluate(
+  int player,                       /** Side to move */
+  int* pieces,                      /** Array of pieces */
+  int* squares                      /** Corresponding array of squares the piece stand on */
+);
+
 
 #endif

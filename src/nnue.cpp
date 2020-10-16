@@ -931,10 +931,10 @@ INLINE void refresh_accumulator(Position *pos)
   accumulator->computedAccumulation = true;
 }
 
+#if 0
 // Calculate cumulative value using difference calculation if possible
 INLINE bool update_accumulator(Position *pos)
 {
-#if 0
   Accumulator *accumulator = &(pos->hstack[pos->hply].accumulator);
   if (accumulator->computedAccumulation)
     return true;
@@ -1020,9 +1020,9 @@ INLINE bool update_accumulator(Position *pos)
 #endif
 
   accumulator->computedAccumulation = true;
-#endif
   return true;
 }
+#endif
 
 // Convert input features
 INLINE void transform(Position *pos, clipped_t *output, mask_t *outMask)
@@ -1289,7 +1289,6 @@ DLLExport void _CDECL nnue_init(const char* evalFile)
 
   printf("NNUE file not found!\n");
   fflush(stdout);
-  exit(EXIT_FAILURE);
 }
 
 DLLExport int _CDECL nnue_evaluate(int player, int* pieces, int* squares)
