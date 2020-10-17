@@ -9,7 +9,7 @@ To compile
 
     make clean; make COMP=gcc 
 
-Cross-compiling for windows and android from linux is possible by setting COMP=[win/arm]
+Cross-compiling for windows from linux using mingw is possible by setting `COMP=win`
 
 # Probing from python
 

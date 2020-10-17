@@ -26,9 +26,14 @@
 #include <arm_neon.h>
 #endif
 
+//-------------------
 #define DLL_EXPORT
 #include "nnue.h"
 #undef DLL_EXPORT
+
+#define KING(c)    ( (c) ? bking : wking )
+#define IS_KING(p) ( ((p) == wking) || ((p) == bking) )
+//-------------------
 
 #ifdef NNUE_EMBEDDED
 #include "incbin.h"
@@ -212,7 +217,7 @@ static void half_kp_append_changed_indices(const Position *pos, const int c,
   ksq = orient(c, ksq);
   for (int i = 0; i < dp->dirtyNum; i++) {
     int pc = dp->pc[i];
-    if (PIECE(pc) == king) continue;
+    if (IS_KING(pc)) continue;
     if (dp->from[i] != 64)
       removed->values[removed->size++] = make_index(c, dp->from[i], pc, ksq);
     if (dp->to[i] != 64)
@@ -234,7 +239,7 @@ static void append_changed_indices(const Position *pos, IndexList removed[2],
 
   if (pos->nnue[1]->accumulator.computedAccumulation) {
     for (unsigned c = 0; c < 2; c++) {
-      reset[c] = dp->pc[0] == (int)COMBINE(c, king);
+      reset[c] = dp->pc[0] == (int)KING(c);
       if (reset[c])
         half_kp_append_active_indices(pos, c, &added[c]);
       else
@@ -243,8 +248,8 @@ static void append_changed_indices(const Position *pos, IndexList removed[2],
   } else {
     const DirtyPiece *dp2 = &(pos->nnue[1]->dirtyPiece);
     for (unsigned c = 0; c < 2; c++) {
-      reset[c] =   dp->pc[0] == (int)COMBINE(c, king)
-                || dp2->pc[0] == (int)COMBINE(c, king);
+      reset[c] =   dp->pc[0] == (int)KING(c)
+                || dp2->pc[0] == (int)KING(c);
       if (reset[c])
         half_kp_append_active_indices(pos, c, &added[c]);
       else {

@@ -23,21 +23,21 @@
 #   define DLLExport EXTERNC
 #endif
 
-/*Internal piece representation
+/**
+* Internal piece representation
+*     wking=1, wqueen=2, wrook=3, wbishop= 4, wknight= 5, wpawn= 6,
+*     bking=7, bqueen=8, brook=9, bbishop=10, bknight=11, bpawn=12
+*
+* Make sure the piecesyou pass to the library from your engine
+* use this format.
 */
 enum colors {
     white,black
 };
-enum chessmen {
-    blank,king,queen,rook,bishop,knight,pawn
+enum pieces {
+    blank=0,wking,wqueen,wrook,wbishop,wknight,wpawn,
+            bking,bqueen,brook,bbishop,bknight,bpawn
 };
-const int pic_tab[14] = {
-    blank,king,queen,rook,bishop,knight,pawn,
-    king,queen,rook,bishop,knight,pawn,blank
-};
-
-#define PIECE(x)         (pic_tab[x])
-#define COMBINE(c,x)     ((x) + (c) * 6) 
 
 /**
 * nnue data structure
@@ -73,6 +73,23 @@ typedef struct Position {
 
 int nnue_evaluate_pos(Position* pos);
 
+/************************************************************************
+*         EXTERNAL INTERFACES
+*
+* Load a NNUE file using
+*
+*   nnue_init(file_path)
+*
+* and then probe score using one of three functions, whichever
+* is convenient. From easy to hard
+*   
+*   a) nnue_evaluate_fen         - accepts a fen string for evaluation
+*   b) nnue_evaluate             - suitable for use in engines
+*   c) nnue_evaluate_incremental - for ultimate performance but will need
+*                                  some work on the engines side.
+*
+**************************************************************************/
+
 /**
 * Load NNUE file
 */
@@ -82,6 +99,8 @@ DLLExport void _CDECL nnue_init(
 
 /**
 * Evaluate on FEN string
+* Returns
+*   Score relative to side to move in approximate centi-pawns
 */
 DLLExport int _CDECL nnue_evaluate_fen(
   const char* fen                   /** FEN string to probe evaluation for */
@@ -93,7 +112,7 @@ DLLExport int _CDECL nnue_evaluate_fen(
 * Piece codes are
 *     wking=1, wqueen=2, wrook=3, wbishop= 4, wknight= 5, wpawn= 6,
 *     bking=7, bqueen=8, brook=9, bbishop=10, bknight=11, bpawn=12,
-* Square are
+* Squares are
 *     A1=0, B1=1 ... H8=63
 * Input format:
 *     piece[0] is white king, square[0] is its location
@@ -102,17 +121,19 @@ DLLExport int _CDECL nnue_evaluate_fen(
 *     piece[x], square[x] can be in any order
 *     ..
 *     piece[n+1] is set to 0 to represent end of array
+* Returns
+*   Score relative to side to move in approximate centi-pawns
 */
 DLLExport int _CDECL nnue_evaluate(
-  int player,                       /** Side to move */
+  int player,                       /** Side to move: white=0 black=1 */
   int* pieces,                      /** Array of pieces */
-  int* squares                      /** Corresponding array of squares the piece stand on */
+  int* squares                      /** Corresponding array of squares each piece stands on */
 );
 
 /**
 * Incremental NNUE evaluation function.
 * -------------------------------------------------
-* First three parameters are as in nnue_evaluate
+* First three parameters and return type are as in @nnue_evaluate
 *
 * nnue_data
 *    nnue_data[0] is pointer to NNUEdata for ply i.e. current position
@@ -120,9 +141,9 @@ DLLExport int _CDECL nnue_evaluate(
 *    nnue_data[2] is pointer to NNUEdata for ply - 2
 */
 DLLExport int _CDECL nnue_evaluate_incremental(
-  int player,                       /** Side to move */
+  int player,                       /** Side to move: white=0 black=1 */
   int* pieces,                      /** Array of pieces */
-  int* squares,                     /** Corresponding array of squares the piece stand on */
+  int* squares,                     /** Corresponding array of squares each piece stands on */
   NNUEdata** nnue_data              /** Pointer to NNUEdata* for current and previous plies */
 );
 
