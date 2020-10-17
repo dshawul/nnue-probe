@@ -23,7 +23,8 @@
 #   define DLLExport EXTERNC
 #endif
 
-/*pieces*/
+/*Internal piece representation
+*/
 enum colors {
     white,black
 };
@@ -38,30 +39,36 @@ const int pic_tab[14] = {
 #define PIECE(x)         (pic_tab[x])
 #define COMBINE(c,x)     ((x) + (c) * 6) 
 
-/*nnue data*/
-#if 0
+/**
+* nnue data structure
+*/
+
 typedef struct DirtyPiece {
   int dirtyNum;
   int pc[3];
   int from[3];
   int to[3];
 } DirtyPiece;
-#endif
 
-typedef struct {
+typedef struct Accumulator {
   alignas(64) int16_t accumulation[2][256];
-  bool computedAccumulation;
+  int computedAccumulation;
 } Accumulator;
 
-/*position*/
+typedef struct NNUEdata {
+  Accumulator accumulator;
+  DirtyPiece dirtyPiece;
+} NNUEdata;
+
+/**
+* position data structure passed to core subroutines
+*  See @nnue_evaluate for a description of parameters
+*/
 typedef struct Position {
   int player;
   int* pieces;
   int* squares;
-  Accumulator accumulator;
-#if 0
-  DirtyPiece dirtyPiece;
-#endif
+  NNUEdata* nnue[3];
 } Position;
 
 int nnue_evaluate_pos(Position* pos);
@@ -102,5 +109,21 @@ DLLExport int _CDECL nnue_evaluate(
   int* squares                      /** Corresponding array of squares the piece stand on */
 );
 
+/**
+* Incremental NNUE evaluation function.
+* -------------------------------------------------
+* First three parameters are as in nnue_evaluate
+*
+* nnue_data
+*    nnue_data[0] is pointer to NNUEdata for ply i.e. current position
+*    nnue_data[1] is pointer to NNUEdata for ply - 1
+*    nnue_data[2] is pointer to NNUEdata for ply - 2
+*/
+DLLExport int _CDECL nnue_evaluate_incremental(
+  int player,                       /** Side to move */
+  int* pieces,                      /** Array of pieces */
+  int* squares,                     /** Corresponding array of squares the piece stand on */
+  NNUEdata** nnue_data              /** Pointer to NNUEdata* for current and previous plies */
+);
 
 #endif

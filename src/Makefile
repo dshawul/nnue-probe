@@ -62,7 +62,7 @@ else
 endif
 
 ifeq ($(COMP),win)
-    CXXFLAGS = -Wall -fstrict-aliasing -fno-exceptions -fno-rtti $(UNUSED) -faligned-new -std=c++11
+    CXXFLAGS = -Wall -fstrict-aliasing -fno-exceptions -fno-rtti $(UNUSED) -std=c++11
     LXXFLAGS += -static
 else ifeq ($(COMP),pgcc)
     CXXFLAGS = warn -Mvect=sse -c11
@@ -74,9 +74,6 @@ else ifeq ($(COMP),icpc)
 else
     CXXFLAGS = -Wall -fstrict-aliasing -fno-exceptions -fno-rtti $(UNUSED) -std=c++11
     LXXFLAGS += -ldl
-    ifneq ($(COMP),arm)
-       CXXFLAGS += -faligned-new
-    endif
 endif
 
 ifeq ($(COMP),arm)
