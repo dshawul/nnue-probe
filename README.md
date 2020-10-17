@@ -1,7 +1,7 @@
 # What is it
 
 nnue-probe is library for probing NNUE neural networks for chess.
-The core nnue probing code is taken from [CFish](https://github.com/syzygy1/Cfish)
+The core nnue probing code is taken from [CFish](https://github.com/syzygy1/Cfish) and modified a bit.
 
 # How to build
 
@@ -13,15 +13,16 @@ Cross-compiling for windows and android from linux is possible by setting COMP=[
 
 # Probing from python
 
-	from ctypes import *
-	nnue = cdll.LoadLibrary("libnnueprobe.so")
-	nnue.nnue_init("/home/daniel/Scorpio/nets-scorpio/nn-baeb9ef2d183.nnue")
-	score = nnue.nnue_evaluate_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
-	print "Score = ", score
+    from __future__ import print_function
+    from ctypes import *
+    nnue = cdll.LoadLibrary("libnnueprobe.so")
+    nnue.nnue_init(b"nn-04cf2b4ed1da.nnue")
+    score = nnue.nnue_evaluate_fen(b"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+    print("Score = ", score)
 
 The result
 
-	Loading NNUE : /home/daniel/Scorpio/nets-scorpio/nn-baeb9ef2d183.nnue
-	NNUE loaded !
-	Score =  42
+    Loading NNUE : nn-04cf2b4ed1da.nnue
+    NNUE loaded !
+    Score =  42
 
