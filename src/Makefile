@@ -11,7 +11,8 @@ HPP = misc.h nnue.h
 #--------------
 # Disable/Add flags as needed
 ############################
-DEFINES = 
+DEFINES =
+DEFINES += -DIS_64BIT 
 ifeq ($(COMP),$(filter $(COMP),gcc clang win icpc))
   DEFINES += -DUSE_AVX2 -mavx2
   DEFINES += -DUSE_SSE41 -msse4.1

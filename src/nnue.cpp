@@ -370,9 +370,9 @@ INLINE bool next_idx(unsigned *idx, unsigned *offset, mask2_t *v,
     memcpy(v, (char *)mask + (*offset / 8), sizeof(mask2_t));
   }
 #ifdef IS_64BIT
-  *idx = *offset + __builtin_ctzll(*v);
+  *idx = *offset + bsf(*v);
 #else
-  *idx = *offset + __builtin_ctzl(*v);
+  *idx = *offset + bsf(*v);
 #endif
   *v &= *v - 1;
   return true;
@@ -1265,20 +1265,12 @@ static bool load_eval_file(const char *evalFile)
 /*
 Interfaces
 */
-static char *loadedFile = NULL;
-
 DLLExport void _CDECL nnue_init(const char* evalFile)
 {
-  if (loadedFile && strcmp(evalFile, loadedFile) == 0)
-    return;
-
-  if (loadedFile)
-    free(loadedFile);
-
   printf("Loading NNUE : %s\n", evalFile);
   fflush(stdout);
+
   if (load_eval_file(evalFile)) {
-    loadedFile = strdup(evalFile);
     printf("NNUE loaded !\n");
     fflush(stdout);
     return;

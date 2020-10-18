@@ -17,6 +17,23 @@
 #   define INLINE  __inline
 #endif
 
+#   if defined(__GNUC__)
+#       define bsf(b) __builtin_ctzll(b)
+#       define bsr(b) (63 - __builtin_clzll(b))
+#   elif defined(_WIN32)
+#       include <intrin.h>
+        FORCEINLINE int bsf(UBMP64 b) {
+            unsigned long x;
+            _BitScanForward64(&x, b);
+            return (int) x;
+        }
+        FORCEINLINE int bsr(UBMP64 b) {
+            unsigned long x;
+            _BitScanReverse64(&x, b);
+            return (int) x;
+        }
+#   endif
+
 #ifdef _WIN32
 
 typedef HANDLE FD;
