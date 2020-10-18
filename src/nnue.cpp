@@ -4,6 +4,17 @@
 #include <string.h>
 #include <stdlib.h>
 
+//--------------------
+#ifdef _MSC_VER
+#  define USE_AVX2   1
+#  define USE_SSE41  1
+#  define USE_SSE3   1
+#  define USE_SSE2   1
+#  define USE_SSE    1
+#  define IS_64BIT   1
+#endif
+//-------------------
+
 #if defined(USE_AVX2)
 #include <immintrin.h>
 
