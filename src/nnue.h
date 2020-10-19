@@ -7,8 +7,6 @@
 #endif
 #endif
 
-#include "misc.h"
-
 /**
 * Calling convention
 */

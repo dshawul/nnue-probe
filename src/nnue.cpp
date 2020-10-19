@@ -38,6 +38,7 @@
 #endif
 
 //-------------------
+#include "misc.h"
 #define DLL_EXPORT
 #include "nnue.h"
 #undef DLL_EXPORT
@@ -45,11 +46,6 @@
 #define KING(c)    ( (c) ? bking : wking )
 #define IS_KING(p) ( ((p) == wking) || ((p) == bking) )
 //-------------------
-
-#ifdef NNUE_EMBEDDED
-#include "incbin.h"
-INCBIN(Network, DefaultEvalFile);
-#endif
 
 // Old gcc on Windows is unable to provide a 32-byte aligned stack.
 // We need to hack around this when using AVX2 and AVX512.
@@ -1251,13 +1247,6 @@ static bool load_eval_file(const char *evalFile)
   map_t mapping;
   size_t size;
 
-#ifdef NNUE_EMBEDDED
-  if (strcmp(evalFile, DefaultEvalFile) == 0) {
-    evalData = gNetworkData;
-    mapping = 0;
-    size = gNetworkSize;
-  } else
-#endif
   {
     FD fd = open_file(evalFile);
     if (fd == FD_ERR) return false;
@@ -1310,7 +1299,7 @@ DLLExport int _CDECL nnue_evaluate(
 DLLExport int _CDECL nnue_evaluate_incremental(
   int player, int* pieces, int* squares, NNUEdata** nnue)
 {
-  assert(nnue[0] && uint64_t(&nnue[0]->accumulator) % 64 == 0);
+  assert(nnue[0] && (uint64_t)(&nnue[0]->accumulator) % 64 == 0);
 
   Position pos;
   pos.nnue[0] = nnue[0];
