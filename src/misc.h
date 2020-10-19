@@ -34,12 +34,12 @@ Intrinsic bsf
 #       define bsr(b) (63 - __builtin_clzll(b))
 #   elif defined(_WIN32)
 #       include <intrin.h>
-        FORCEINLINE int bsf(uint64_t b) {
+        INLINE int bsf(uint64_t b) {
             unsigned long x;
             _BitScanForward64(&x, b);
             return (int) x;
         }
-        FORCEINLINE int bsr(uint64_t b) {
+        INLINE int bsr(uint64_t b) {
             unsigned long x;
             _BitScanReverse64(&x, b);
             return (int) x;

@@ -96,7 +96,7 @@ void decode_fen(const char* fen_str, int* player, int* castle,
       for(int f = 0;f <= 7;f++) {
           sq = r * 8 + f;
           if((pfen = strchr(piece_name,*p)) != 0) {
-              int pc = int(strchr(piece_name,*pfen) - piece_name);
+              int pc = (int)(strchr(piece_name,*pfen) - piece_name);
               if(pc == 1) {
                  piece[0] = pc;
                  square[0] = sq;
@@ -143,9 +143,9 @@ void decode_fen(const char* fen_str, int* player, int* castle,
       epsquare = 0;
       p++;
   } else {
-      epsquare = int(strchr(file_name,*p) - file_name);
+      epsquare = (int)(strchr(file_name,*p) - file_name);
       p++;
-      epsquare += 16 * int(strchr(rank_name,*p) - rank_name);
+      epsquare += 16 * (int)(strchr(rank_name,*p) - rank_name);
       p++;
   }
   square[index] = epsquare;

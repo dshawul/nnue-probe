@@ -1,13 +1,23 @@
 #ifndef NNUE_H
 #define NNUE_H
 
+#ifndef __cplusplus
+#ifndef _MSC_VER
+#include <stdalign.h>
+#endif
+#endif
+
 #include "misc.h"
 
+/**
+* Calling convention
+*/
 #ifdef __cplusplus
 #   define EXTERNC extern "C"
 #else
 #   define EXTERNC
 #endif
+
 #if defined (_WIN32)
 #   define _CDECL __cdecl
 #ifdef DLL_EXPORT
